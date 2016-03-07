@@ -19,9 +19,11 @@ require 'optim'
 -- 1. Create Network
 -- 1.1 If preloading option is set, preload weights from existing models appropriately
 if opt.retrain ~= 'none' then
+   paths.dofile('models/' .. opt.netType .. '.lua')
    assert(paths.filep(opt.retrain), 'File not found: ' .. opt.retrain)
    print('Loading model from file: ' .. opt.retrain);
    model = loadDataParallel(opt.retrain, opt.nGPU) -- defined in util.lua
+   pretrain = loadPremodel()
 else
    paths.dofile('models/' .. opt.netType .. '.lua')
    print('=> Creating model from file: models/' .. opt.netType .. '.lua')
