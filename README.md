@@ -19,5 +19,7 @@ th main.lua --help
 ```
 
 ### Thanks to
-- Thanks to [Soumith Chintala](https://github.com/soumith)
+- [Soumith Chintala](https://github.com/soumith)
+- [Sergey Zagoruyko](https://github.com/szagoruyko)
+
 
