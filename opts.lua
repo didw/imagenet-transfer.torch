@@ -38,6 +38,7 @@ function M.parse(arg)
     cmd:option('-weightDecay',     5e-4, 'weight decay')
     ---------- Model options ----------------------------------
     cmd:option('-netType',     'alexnet', 'Options: alexnet')
+    cmd:option('-trainType',   'transfer', 'Options: transfer | finetune')
     cmd:option('-retrain',     'none', 'provide path to model to retrain with')
     cmd:option('-optimState',  'none', 'provide path to an optimState to reload from')
     cmd:text()

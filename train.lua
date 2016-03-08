@@ -154,8 +154,12 @@ function trainBatch(inputsCPU, labelsCPU)
    local err, outputs
    feval = function(x)
       model:zeroGradParameters()
-      local feats = pretrain:forward(inputs)
-      outputs = model:forward(feats)
+      if opt.trainType == 'transfer' then
+         local feats = pretrain:forward(inputs)
+         outputs = model:forward(feats)
+      elseif opt.trainType == 'finetune' then
+         outputs = model:forward(inputs)
+      end
       err = criterion:forward(outputs, labels)
       local gradOutputs = criterion:backward(outputs, labels)
       model:backward(feats, gradOutputs)
