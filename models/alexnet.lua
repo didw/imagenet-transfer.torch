@@ -60,10 +60,11 @@ function createModel(nGPU)
    classifier:add(nn.LogSoftMax())
    classifier:cuda()
 
+   local model = nn.Sequential()
    if opt.trainType == 'transfer' then
-      local model = nn.Sequential():add(classifier)
+      model:add(classifier)
    elseif opt.trainType == 'finetune' then
-      local model = nn.Sequential():add(pretrain):add(classifier)
+      model:add(pretrain):add(classifier)
    else
       print 'not supported type'
    end
