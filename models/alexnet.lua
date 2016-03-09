@@ -34,7 +34,7 @@ function createModel(nGPU)
      local caffemodel_url = 'http://www.cs.bu.edu/groups/ivc/data/SOS/AlexNet_SalObjSub.caffemodel'
      local proto_url = 'https://gist.githubusercontent.com/jimmie33/0585ed9428dc5222981f/raw/ec5b38a662bfcd140dd1ce15a2949b38ef5630c2/deploy.prototxt'
      os.execute('wget --output-document models/AlexNet/AlexNet_SalObjSub.caffemodel ' .. caffemodel_url)
-     os.execute('wget --output-document models/AlexNet/deploy.prototxt '              .. proto_url)
+     os.execute('wget --output-document models/AlexNet/deploy.prototxt'              .. proto_url)
    end
    
    local proto = 'models/AlexNet/deploy.prototxt'
@@ -49,26 +49,23 @@ function createModel(nGPU)
       exit(1)   
    end
    
-   for i=24,20,-1 do
-      pretrain:remove(i)
-   end
-   
-   local classifier = nn.Sequential()
-   classifier:add(nn.Linear(4096, 4096))
-   classifier:add(nn.Threshold(0, 1e-6))
-   classifier:add(nn.Linear(4096, nClasses))
-   classifier:add(nn.LogSoftMax())
-   classifier:cuda()
-
    local model = nn.Sequential()
    if opt.trainType == 'transfer' then
+      for i=24,23,-1 do
+         pretrain:remove(i)
+      end
+      
+      local classifier = nn.Sequential()
+      classifier:add(nn.Linear(4096, nClasses))
+      classifier:add(nn.SoftMax())
+      classifier:cuda()
+      
       model:add(classifier)
    elseif opt.trainType == 'finetune' then
-      model:add(pretrain):add(classifier)
+      model:add(pretrain)
    else
       print 'not supported type'
    end
-   local model = nn.Sequential():add(classifier)
    model.imageSize = 256
    model.imageCrop = 224
 
