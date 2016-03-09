@@ -154,15 +154,20 @@ function trainBatch(inputsCPU, labelsCPU)
    local err, outputs
    feval = function(x)
       model:zeroGradParameters()
+      local feats = torch.CudaTensor()
       if opt.trainType == 'transfer' then
-         local feats = pretrain:forward(inputs)
+         feats = pretrain:forward(inputs)
          outputs = model:forward(feats)
       elseif opt.trainType == 'finetune' then
          outputs = model:forward(inputs)
       end
       err = criterion:forward(outputs, labels)
       local gradOutputs = criterion:backward(outputs, labels)
-      model:backward(feats, gradOutputs)
+      if opt.trainType == 'transfer' then
+         model:backward(feats, gradOutputs)
+      elseif opt.trainType == 'finetune' then
+         model:backward(inputs, gradOutputs)
+      end
       return err, gradParameters
    end
    optim.sgd(feval, parameters, optimState)
