@@ -67,8 +67,15 @@ function testBatch(inputsCPU, labelsCPU)
    inputs:resize(inputsCPU:size()):copy(inputsCPU)
    labels:resize(labelsCPU:size()):copy(labelsCPU)
 
-   local feats = pretrain:forward(inputs)
-   local outputs = model:forward(feats)
+   local feats = torch.CudaTensor()
+   local outputs 
+   
+   if opt.trainType == 'transfer' then
+      feats = pretrain:forward(inputs)
+      outputs = model:forward(feats)
+   elseif opt.trainType == 'finetune' then
+      outputs = model:forward(inputs)   
+   end
    local err = criterion:forward(outputs, labels)
    cutorch.synchronize()
    local pred = outputs:float()
